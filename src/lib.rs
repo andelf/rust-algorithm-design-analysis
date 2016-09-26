@@ -1,3 +1,5 @@
+pub mod qsort;
+
 pub fn merge_sort_and_count_inversions(seq: &mut [usize]) -> usize {
     if seq.len() <= 1 {
         0

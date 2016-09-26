@@ -28,6 +28,22 @@ fn part1_week1() -> io::Result<()> {
     Ok(())
 }
 
+fn part1_week2() -> io::Result<()> {
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/QuickSort.txt"));
+
+    try!(f.read_to_string(&mut s));
+    let mut vals: Vec<i32> = s.lines()
+        .map(|s| s.trim().parse().unwrap())
+        .collect();
+
+    println!("got vals -> {:?}", algo::qsort::quick_sort(&mut vals[..]));
+    Ok(())
+
+}
+
 fn main() {
-    part1_week1().unwrap();
+    // part1_week1().unwrap();
+
+    part1_week2();
 }
