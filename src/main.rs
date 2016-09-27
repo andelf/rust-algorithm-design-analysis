@@ -7,16 +7,19 @@
 // notice may not be copied, modified, or distributed except
 // according to those terms.
 
+#![allow(dead_code)]
 
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
-use std::collections::BTreeMap;
+
 
 #[path = "lib.rs"]
 mod algo;
 
 fn part1_week1() -> io::Result<()> {
+    use algo::inversions::*;
+
     let mut s = String::new();
     let mut f = try!(File::open("./priv/IntegerArray.txt"));
 
@@ -25,7 +28,7 @@ fn part1_week1() -> io::Result<()> {
         .map(|s| s.trim().parse().unwrap())
         .collect();
 
-    println!("got vals -> {:?}", algo::merge_sort_and_count_inversions(&mut vals[..]));
+    println!("got vals -> {:?}", merge_sort_and_count_inversions(&mut vals[..]));
     Ok(())
 }
 
@@ -58,7 +61,7 @@ fn part1_week3() -> io::Result<()> {
              .split('\t')
              .map(|s| s.parse::<u32>().unwrap())
              .collect::<Vec<_>>())
-        .map(|mut uvs| {
+        .map(|uvs| {
             (uvs[0], uvs[1..].to_owned())
         })
         .collect::<algo::karger::Graph>();
@@ -69,6 +72,7 @@ fn part1_week3() -> io::Result<()> {
     Ok(())
 }
 
+#[allow(unused_must_use)]
 fn main() {
     // part1_week1().unwrap();
 

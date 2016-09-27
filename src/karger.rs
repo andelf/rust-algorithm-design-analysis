@@ -5,13 +5,6 @@ use std::iter::FromIterator;
 
 use self::rand::Rng;
 
-fn min_max<T: Ord + Copy>(a: T, b: T) -> (T, T) {
-    if a > b {
-        (b, a)
-    } else {
-        (a, b)
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct Graph {
@@ -100,7 +93,7 @@ impl FromIterator<(u32, Vec<u32>)> for Graph {
 
 #[test]
 fn test_graph_basic() {
-    let mut g = Graph::new(
+    let g = Graph::new(
         vec![1, 2, 3, 4],
         vec![vec![2,3],
              vec![1, 3, 4],
