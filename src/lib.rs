@@ -1,5 +1,8 @@
 pub mod qsort;
 
+// IX. GRAPHS AND THE CONTRACTION ALGORITHM (Week 3)
+pub mod karger;
+
 pub fn merge_sort_and_count_inversions(seq: &mut [usize]) -> usize {
     if seq.len() <= 1 {
         0
