@@ -122,7 +122,7 @@ impl Digraph {
     }
 
     pub fn reverse_postorder(&self) -> Vec<usize> {
-        let mut dfo = DepthFirstOrder::new(self);
+        let dfo = DepthFirstOrder::new(self);
         dfo.postorder.iter().cloned().rev().collect()
     }
 
@@ -266,22 +266,41 @@ impl<'a> DepthFirstOrder<'a> {
         dfo
     }
 
-    // DFS, recursive.
+    // DFS, non-recursive.
     fn dfs(&mut self, v: usize) {
-        self.marked[v] = true;
-        self.pre[v] = self.pre_counter;
-        self.pre_counter += 1;
-        self.preorder.push_back(v);
+        enum QueuedJob {
+            VisitVertex(usize),
+            FinishVertex(usize),
+        };
 
-        for &w in self.graph.adj(v) {
-            if !self.marked[w] {
-                self.dfs(w);
+        let mut stack = VecDeque::new();
+        stack.push_back(QueuedJob::VisitVertex(v));
+
+        while let Some(j) = stack.pop_back() {
+            match j {
+                QueuedJob::VisitVertex(v) => {
+                    if self.marked[v] {
+                        continue;
+                    }
+                    self.marked[v] = true;
+                    self.pre[v] = self.pre_counter;
+                    self.pre_counter += 1;
+                    self.preorder.push_back(v);
+
+                    stack.push_back(QueuedJob::FinishVertex(v));
+                    stack.extend(self.graph
+                                     .adj(v)
+                                     .iter()
+                                     .cloned()
+                                     .map(|u| QueuedJob::VisitVertex(u)));
+                }
+                QueuedJob::FinishVertex(v) => {
+                    self.postorder.push_back(v);
+                    self.post[v] = self.post_counter;
+                    self.post_counter += 1;
+                }
             }
         }
-
-        self.postorder.push_back(v);
-        self.post[v] = self.post_counter;
-        self.post_counter += 1;
     }
 }
 
@@ -440,6 +459,7 @@ fn test_depth_first_order() {
             .last();
 
     let ord: Vec<usize> = g.reverse_postorder();
-    // assert_eq!(ord, vec![8, 7, 2, 3, 0, 6, 9, 10, 11, 12, 1, 5, 4]);
     println!("Reverse postorder: {:?}", ord);
+    assert!(ord == vec![8, 7, 2, 3, 0, 6, 9, 10, 11, 12, 1, 5, 4] ||
+            ord == vec![8, 7, 2, 3, 0, 5, 1, 6, 9, 11, 10, 12, 4]);
 }
