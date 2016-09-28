@@ -72,10 +72,55 @@ fn part1_week3() -> io::Result<()> {
     Ok(())
 }
 
+
+/// FIXME: wrong answer, all tests passed. :(
+/// How to verify(in R):
+/// ```r
+/// require(igraph);
+/// dat <- read.csv("priv/SCC.txt", sep = ' ', header = F)
+/// m <- as.matrix(dat)
+/// el <- cbind(m[,"V1"], m[,"V2"])
+/// g <- graph.edgelist(el, directed = T)
+/// clu <- clusters(g, mode = "strong")
+/// sort(clu$csize, decreasing = T)[:5]
+/// ```
+fn part1_week4() -> io::Result<()> {
+    use algo::graphs::Digraph;
+
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/SCC.txt"));
+
+    try!(f.read_to_string(&mut s));
+
+    // Vertices are labeled as positive integers from 1 to 875714.
+    // While Digraph counts from 0 to 875713
+    let mut g = Digraph::new(875714);
+
+    s.lines()
+        .map(|line| {
+            let mut it = line.trim()
+                .split(' ')
+                .map(|s| s.parse::<usize>().unwrap() - 1);
+            let u = it.next().unwrap();
+            let v = it.next().unwrap();
+            g.add_edge(u, v);
+        })
+        .last();
+
+    let scc = g.kosaraju_sharir_scc();
+    println!("got => {:?}", scc.week4_programming_assignment());
+
+
+
+    Ok(())
+}
+
+
+
 #[allow(unused_must_use)]
 fn main() {
-    // part1_week1().unwrap();
-
+    // part1_week1();
     // part1_week2();
-    part1_week3();
+    // part1_week3();
+    part1_week4();
 }
