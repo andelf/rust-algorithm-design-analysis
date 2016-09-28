@@ -10,7 +10,7 @@ use std::collections::vec_deque::VecDeque;
 pub struct Digraph {
     v: usize,
     e: usize,
-    adj: Vec<Vec<usize>>
+    adj: Vec<Vec<usize>>,
 }
 
 impl Digraph {
@@ -18,7 +18,7 @@ impl Digraph {
         Digraph {
             v: v,
             e: 0,
-            adj: vec![vec![]; v]
+            adj: vec![vec![]; v],
         }
     }
 
@@ -56,7 +56,7 @@ impl Digraph {
 
     pub fn number_of_self_loops(&self) -> usize {
         let mut count = 0;
-        for v in 0 .. self.v() {
+        for v in 0..self.v() {
             for &w in self.adj(v) {
                 if v == w {
                     count += 1;
@@ -70,7 +70,7 @@ impl Digraph {
         let mut dot = String::new();
 
         dot.push_str("digraph G {\n");
-        for i in 0 .. self.v {
+        for i in 0..self.v {
             dot.push_str(&format!("  {};\n", i));
         }
 
@@ -99,7 +99,7 @@ impl Digraph {
         Digraph {
             v: v,
             e: self.e,
-            adj: adj
+            adj: adj,
         }
     }
 
@@ -109,7 +109,7 @@ impl Digraph {
         path
     }
 
-    pub fn dfs_multi_source<T: IntoIterator<Item=usize>>(&self, s: T) -> SearchPaths {
+    pub fn dfs_multi_source<T: IntoIterator<Item = usize>>(&self, s: T) -> SearchPaths {
         let mut path = SearchPaths::new(self, SearchSource::Multi(s.into_iter().collect()));
         path.dfs();
         path
@@ -121,10 +121,9 @@ impl Digraph {
         path
     }
 
-    pub fn reverse_dfs_postorder(&self) -> ::std::vec::IntoIter<usize> {
+    pub fn reverse_postorder(&self) -> Vec<usize> {
         let mut dfo = DepthFirstOrder::new(self);
-        dfo.init();
-        dfo.reverse_post.into_iter()
+        dfo.postorder.iter().cloned().rev().collect()
     }
 
     pub fn kosaraju_sharir_scc(&self) -> KosarajuSharirSCC {
@@ -134,21 +133,21 @@ impl Digraph {
 
 pub enum SearchSource {
     Single(usize),
-    Multi(Vec<usize>)
+    Multi(Vec<usize>),
 }
 
 impl SearchSource {
     fn iter(&self) -> ::std::vec::IntoIter<usize> {
         match *self {
             SearchSource::Single(ref i) => vec![*i].into_iter(),
-            SearchSource::Multi(ref vs) => vs.clone().into_iter()
+            SearchSource::Multi(ref vs) => vs.clone().into_iter(),
         }
     }
 
     fn contains(&self, v: usize) -> bool {
         match *self {
             SearchSource::Single(ref i) => *i == v,
-            SearchSource::Multi(ref vs) => vs.contains(&v)
+            SearchSource::Multi(ref vs) => vs.contains(&v),
         }
     }
 }
@@ -157,7 +156,7 @@ pub struct SearchPaths<'a> {
     graph: &'a Digraph,
     marked: Vec<bool>,
     edge_to: Vec<Option<usize>>,
-    source: SearchSource
+    source: SearchSource,
 }
 
 impl<'a> SearchPaths<'a> {
@@ -173,7 +172,7 @@ impl<'a> SearchPaths<'a> {
             graph: graph,
             marked: marked,
             edge_to: edge_to,
-            source: source
+            source: source,
         }
     }
 
@@ -230,39 +229,59 @@ impl<'a> SearchPaths<'a> {
     }
 }
 
+/// Compute preorder and postorder for a digraph.
 pub struct DepthFirstOrder<'a> {
     graph: &'a Digraph,
     marked: Vec<bool>,
-    reverse_post: Vec<usize>
+    /// preorder number of v
+    pre: Vec<usize>,
+    /// postorder number of v
+    post: Vec<usize>,
+    /// vertices in preorder
+    pub preorder: VecDeque<usize>,
+    /// vertices in postorder
+    pub postorder: VecDeque<usize>,
+    pre_counter: usize,
+    post_counter: usize,
 }
 
 impl<'a> DepthFirstOrder<'a> {
     fn new(graph: &Digraph) -> DepthFirstOrder {
-        let marked = vec![false; graph.v()];
-
-        DepthFirstOrder {
+        let mut dfo = DepthFirstOrder {
             graph: graph,
-            marked: marked,
-            reverse_post: vec![]
-        }
-    }
+            marked: vec![false; graph.v()],
+            pre: vec![0; graph.v()],
+            post: vec![0; graph.v()],
+            preorder: VecDeque::new(),
+            postorder: VecDeque::new(),
+            pre_counter: 0,
+            post_counter: 0,
+        };
 
-    fn init(&mut self) {
-        for v in 0 .. self.graph.v() {
-            if !self.marked[v] {
-                self.dfs(v)
+        for v in 0..dfo.graph.v() {
+            if !dfo.marked[v] {
+                dfo.dfs(v)
             }
         }
+        dfo
     }
 
+    // DFS, recursive.
     fn dfs(&mut self, v: usize) {
         self.marked[v] = true;
+        self.pre[v] = self.pre_counter;
+        self.pre_counter += 1;
+        self.preorder.push_back(v);
+
         for &w in self.graph.adj(v) {
             if !self.marked[w] {
                 self.dfs(w);
             }
         }
-        self.reverse_post.push(v);
+
+        self.postorder.push_back(v);
+        self.post[v] = self.post_counter;
+        self.post_counter += 1;
     }
 }
 
@@ -275,7 +294,6 @@ pub struct KosarajuSharirSCC<'a> {
     count: usize,
     vertices: usize,
     _leader: usize,
-    final_id: Vec<(usize,usize)>,
 }
 
 impl<'a> KosarajuSharirSCC<'a> {
@@ -288,7 +306,6 @@ impl<'a> KosarajuSharirSCC<'a> {
             count: 0,
             vertices: n,
             _leader: 0,
-            final_id: vec![],
         };
         cc.init();
         cc
@@ -297,40 +314,13 @@ impl<'a> KosarajuSharirSCC<'a> {
     fn init(&mut self) {
         let g_rev = self.graph.reverse();
 
-        for v in g_rev.reverse_dfs_postorder() {
+        for v in g_rev.reverse_postorder() {
             if !self.marked[v] {
                 self._leader = v;
                 self.dfs(v, self.graph);
                 self.count += 1;
             }
         }
-
-        let groups = self.id.clone();
-
-        self.marked = vec![false; self.vertices];
-        self.id = vec![None; self.vertices];
-        self.count = 0;
-
-
-        for v in g_rev.reverse_dfs_postorder() {
-            if !self.marked[v] {
-                self._leader = v;
-                self.dfs(v, &g_rev);
-                self.count += 1;
-            }
-        }
-
-        // println!("leaders: \nG    : {:?}\nG_rev: {:?}", self.id, groups);
-
-        // node with the same "leader" is the SCC
-        self.final_id = self.id.iter()
-            .enumerate()
-            .map(|(i, id)| {
-                let a = id.unwrap();
-                let b = groups[i].unwrap();
-                (a, b)
-            })
-            .collect();
     }
 
     pub fn count(&self) -> usize {
@@ -346,14 +336,11 @@ impl<'a> KosarajuSharirSCC<'a> {
     }
 
     pub fn week4_programming_assignment(&self) -> Vec<usize> {
-        use ::std::collections::btree_map::BTreeMap;
+        use std::collections::btree_map::BTreeMap;
 
         let mut counter = BTreeMap::new();
-        // for id in self.id.iter() {
-        //     *counter.entry(id.unwrap()).or_insert(0) += 1;
-        // }
-        for id in self.final_id.iter() {
-            *counter.entry(id).or_insert(0) += 1;
+        for id in self.id.iter() {
+            *counter.entry(id.unwrap()).or_insert(0) += 1;
         }
         let mut res: Vec<usize> = counter.values().cloned().collect();
         res.sort_by(|a, b| b.cmp(&a));
@@ -382,31 +369,26 @@ pub fn read_graph_from_string(s: &str) -> Digraph {
     let mut g = Digraph::new(1);
 
     s.lines()
-        .map(|line| {
-            let mut it = line.trim()
-                .split(' ')
-                .map(|s| s.parse::<usize>().unwrap() - 1);
-            let u = it.next().unwrap();
-            let v = it.next().unwrap();
-            if u >= g.v { g.resize(u+1); }
-            if v >= g.v { g.resize(v+1); }
-            g.add_edge(u, v);
-        })
-        .last();
+     .map(|line| {
+         let mut it = line.trim()
+                          .split(' ')
+                          .map(|s| s.parse::<usize>().unwrap() - 1);
+         let u = it.next().unwrap();
+         let v = it.next().unwrap();
+         if u >= g.v {
+             g.resize(u + 1);
+         } // work around
+         if v >= g.v {
+             g.resize(v + 1);
+         }
+         g.add_edge(u, v);
+     })
+     .last();
     g
 }
 
 
-#[test]
-fn test_bad() {
-    let case2 = "1 2\n2 3\n3 1\n3 4\n5 4\n6 4\n8 6\n6 7\n7 8";
-    let g = read_graph_from_string(case2);
-    let scc = g.kosaraju_sharir_scc();
-    let r = scc.week4_programming_assignment();
-    assert_eq!(r, vec![3,3,1,1]);
-}
-
-
+// Test cases from Forums.
 #[test]
 fn test_programming_assigment4() {
 
@@ -418,13 +400,13 @@ fn test_programming_assigment4() {
     let case1 = "1 4\n2 8\n3 6\n4 7\n5 2\n6 9\n7 1\n8 5\n8 6\n9 7\n9 3";
     let g = read_graph_from_string(case1);
     let r = g.kosaraju_sharir_scc().week4_programming_assignment();
-    assert_eq!(r, vec![3,3,3]);
+    assert_eq!(r, vec![3, 3, 3]);
 
     let case2 = "1 2\n2 3\n3 1\n3 4\n5 4\n6 4\n8 6\n6 7\n7 8";
     let g = read_graph_from_string(case2);
     let scc = g.kosaraju_sharir_scc();
     let r = scc.week4_programming_assignment();
-    assert_eq!(r, vec![3,3,1,1]);
+    assert_eq!(r, vec![3, 3, 1, 1]);
 
     // M-x replace-string ; C-q C-j ENTER \n ENTER
     let case3 = "1 2\n2 3\n3 1\n3 4\n5 4\n6 4\n8 6\n6 7\n7 8\n4 3\n4 6";
@@ -432,10 +414,32 @@ fn test_programming_assigment4() {
     let r = g.kosaraju_sharir_scc().week4_programming_assignment();
     assert_eq!(r, vec![7, 1]);
 
-    let case4 = "1 2\n2 3\n2 4\n2 5\n3 6\n4 5\n4 7\n5 2\n5 6\n5 7\n6 3\n6 8\n7 8\n7 10\n8 7\n9 7\n10 9\n10 11\n11 12\n12 10";
-
+    let case4 = "1 2\n2 3\n2 4\n2 5\n3 6\n4 5\n4 7\n5 2\n5 6\n5 7\n6 3\n6 8\n7 8\n7 10\n8 7\n9 \
+                 7\n10 9\n10 11\n11 12\n12 10";
     let g = read_graph_from_string(case4);
     let r = g.kosaraju_sharir_scc().week4_programming_assignment();
-    assert_eq!(r, vec![6,3,2,1]);
+    assert_eq!(r, vec![6, 3, 2, 1]);
+}
 
+
+#[test]
+fn test_depth_first_order() {
+    // digraph from http://algs4.cs.princeton.edu/42digraph/tinyDAG.txt
+    let tiny_dag = "2 3\n0 6\n0 1\n2 0\n11 12\n9 12\n9 10\n9 11\n3 5\n8 7\n5 4\n0 5\n6 4\n6 9\n7 6";
+    let mut g = Digraph::new(13);
+
+    tiny_dag.lines()
+            .map(|line| {
+                let mut it = line.trim()
+                                 .split(' ')
+                                 .map(|s| s.parse::<usize>().unwrap());
+                let u = it.next().unwrap();
+                let v = it.next().unwrap();
+                g.add_edge(u, v);
+            })
+            .last();
+
+    let ord: Vec<usize> = g.reverse_postorder();
+    // assert_eq!(ord, vec![8, 7, 2, 3, 0, 6, 9, 10, 11, 12, 1, 5, 4]);
+    println!("Reverse postorder: {:?}", ord);
 }

@@ -97,20 +97,18 @@ fn part1_week4() -> io::Result<()> {
     let mut g = Digraph::new(875714);
 
     s.lines()
-        .map(|line| {
-            let mut it = line.trim()
-                .split(' ')
-                .map(|s| s.parse::<usize>().unwrap() - 1);
-            let u = it.next().unwrap();
-            let v = it.next().unwrap();
-            g.add_edge(u, v);
-        })
-        .last();
+     .map(|line| {
+         let mut it = line.trim()
+                          .split(' ')
+                          .map(|s| s.parse::<usize>().unwrap() - 1);
+         let u = it.next().unwrap();
+         let v = it.next().unwrap();
+         g.add_edge(u, v);
+     })
+     .last();
 
     let scc = g.kosaraju_sharir_scc();
     println!("got => {:?}", scc.week4_programming_assignment());
-
-
 
     Ok(())
 }
