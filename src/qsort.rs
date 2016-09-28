@@ -17,7 +17,7 @@ pub fn quick_sort(arr: &mut [i32]) -> usize {
         arr.swap(0, pivot);
     }
     let mid = inplace_partition(arr);
-    let x = quick_sort(&mut arr[..mid-1]);
+    let x = quick_sort(&mut arr[..mid - 1]);
     let y = quick_sort(&mut arr[mid..]);
     // when there is a recursive call on a subarray of length m,
     // you should simply add m−1 to your running total of comparisons.
@@ -30,7 +30,7 @@ pub fn quick_sort(arr: &mut [i32]) -> usize {
 
 fn choose_pivot(arr: &[i32]) -> usize {
     // 0
-    //arr.len() - 1
+    // arr.len() - 1
     median_of_three(arr)
 }
 
@@ -44,12 +44,12 @@ fn median_of_three(arr: &[i32]) -> usize {
     let b = arr[middle];
     let c = arr[last];
 
-    if (a-b)*(b-c) >= 0 {
+    if (a - b) * (b - c) >= 0 {
         middle
-    } else if (a-b)*(a-c) <= 0 {
+    } else if (a - b) * (a - c) <= 0 {
         first
     } else {
-       last
+        last
     }
 }
 
@@ -60,13 +60,13 @@ fn inplace_partition(arr: &mut [i32]) -> usize {
     let p = arr[pivot];
     let mut i = pivot + 1;
 
-    for j in pivot+1 .. n {
+    for j in pivot + 1..n {
         if arr[j] < p {
             arr.swap(j, i);
             i += 1
         }
     }
-    arr.swap(pivot, i-1);
+    arr.swap(pivot, i - 1);
     i
 }
 

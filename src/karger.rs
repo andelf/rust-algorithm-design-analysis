@@ -8,18 +8,16 @@ use self::rand::Rng;
 
 #[derive(Debug, Clone)]
 pub struct Graph {
-    pub adj: BTreeMap<u32, Vec<u32>>
+    pub adj: BTreeMap<u32, Vec<u32>>,
 }
 
 impl Graph {
     pub fn new(vs: Vec<u32>, es: Vec<Vec<u32>>) -> Graph {
         let adj = vs.iter()
-            .enumerate()
-            .map(|(i, &u)| (u, es[i].clone()))
-            .collect();
-        Graph {
-            adj: adj
-        }
+                    .enumerate()
+                    .map(|(i, &u)| (u, es[i].clone()))
+                    .collect();
+        Graph { adj: adj }
     }
 
     pub fn random_edge(&self) -> (u32, u32) {
@@ -37,23 +35,27 @@ impl Graph {
 
         let v_to = self.adj.remove(&v).expect("v not in Graph");
 
-        self.adj.get_mut(&u)
+        self.adj
+            .get_mut(&u)
             .map(|u_to| {
                 *u_to = u_to.iter()
-                    .cloned()
-                    .chain(v_to.into_iter())
-                    .filter(|&w| w != u && w != v)
-                    .collect();
+                            .cloned()
+                            .chain(v_to.into_iter())
+                            .filter(|&w| w != u && w != v)
+                            .collect();
             });
-        self.adj.values_mut()
-            .map(|vs|
-                 vs.iter_mut()
-                 .map(|w| {
-                     if *w == v {
-                         *w = u;
-                     }
-                 }).last()
-            ).last();
+        self.adj
+            .values_mut()
+            .map(|vs| {
+                vs.iter_mut()
+                  .map(|w| {
+                      if *w == v {
+                          *w = u;
+                      }
+                  })
+                  .last()
+            })
+            .last();
     }
 
     pub fn vertices(&self) -> usize {
@@ -83,22 +85,16 @@ impl Graph {
 
 
 impl FromIterator<(u32, Vec<u32>)> for Graph {
-    fn from_iter<I: IntoIterator<Item=(u32, Vec<u32>)>>(iter: I) -> Self {
-        Graph {
-            adj: iter.into_iter().collect()
-        }
+    fn from_iter<I: IntoIterator<Item = (u32, Vec<u32>)>>(iter: I) -> Self {
+        Graph { adj: iter.into_iter().collect() }
     }
 }
 
 
 #[test]
 fn test_graph_basic() {
-    let g = Graph::new(
-        vec![1, 2, 3, 4],
-        vec![vec![2,3],
-             vec![1, 3, 4],
-             vec![1, 2, 4],
-             vec![2, 3]]);
+    let g = Graph::new(vec![1, 2, 3, 4],
+                       vec![vec![2, 3], vec![1, 3, 4], vec![1, 2, 4], vec![2, 3]]);
 
     assert_eq!(g.vertices(), 4);
     assert_eq!(g.edges(), 5);
@@ -109,12 +105,8 @@ fn test_graph_basic() {
 #[test]
 fn test_graph_contract() {
 
-    let mut g = Graph::new(
-        vec![1, 2, 3, 4],
-        vec![vec![2,3],
-             vec![1, 3, 4],
-             vec![1, 2, 4],
-             vec![2, 3]]);
+    let mut g = Graph::new(vec![1, 2, 3, 4],
+                           vec![vec![2, 3], vec![1, 3, 4], vec![1, 2, 4], vec![2, 3]]);
 
     println!("random edge => {:?}", g.random_edge());
     println!("random edge => {:?}", g.random_edge());
@@ -132,12 +124,8 @@ fn test_graph_contract() {
 
 #[test]
 fn test_min_cut() {
-    let g = Graph::new(
-        vec![1, 2, 3, 4],
-        vec![vec![2,3],
-             vec![1, 3, 4],
-             vec![1, 2, 4],
-             vec![2, 3]]);
+    let g = Graph::new(vec![1, 2, 3, 4],
+                       vec![vec![2, 3], vec![1, 3, 4], vec![1, 2, 4], vec![2, 3]]);
 
     println!("min cut => {:?}", g.minimum_cut_karger());
 

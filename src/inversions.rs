@@ -24,18 +24,18 @@ fn merge(seq: &mut [usize], mid: usize) -> usize {
 
     let mut temp = Vec::with_capacity(n);
 
-    while i <= mid-1 && j < n {
+    while i <= mid - 1 && j < n {
         if seq[i] <= seq[j] {
             temp.push(seq[i]);
             i += 1;
         } else {
-            inv_cnt += mid-i;
+            inv_cnt += mid - i;
             temp.push(seq[j]);
             j += 1;
         }
     }
 
-    while i <= mid-1 {
+    while i <= mid - 1 {
         temp.push(seq[i]);
         i += 1;
     }
@@ -56,10 +56,10 @@ mod tests {
 
     #[test]
     fn test_num_of_inversions() {
-        assert_eq!(merge_sort_and_count_inversions(&mut [1,3,5,2,4,6]), 3);
-        assert_eq!(merge_sort_and_count_inversions(&mut [1,5,3,2,4]), 4);
-        assert_eq!(merge_sort_and_count_inversions(&mut [5,4,3,2,1]), 10);
-        assert_eq!(merge_sort_and_count_inversions(&mut [1,6,3,2,4,5]), 5);
+        assert_eq!(merge_sort_and_count_inversions(&mut [1, 3, 5, 2, 4, 6]), 3);
+        assert_eq!(merge_sort_and_count_inversions(&mut [1, 5, 3, 2, 4]), 4);
+        assert_eq!(merge_sort_and_count_inversions(&mut [5, 4, 3, 2, 1]), 10);
+        assert_eq!(merge_sort_and_count_inversions(&mut [1, 6, 3, 2, 4, 5]), 5);
     }
 
 }

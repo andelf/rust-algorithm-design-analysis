@@ -25,10 +25,11 @@ fn part1_week1() -> io::Result<()> {
 
     try!(f.read_to_string(&mut s));
     let mut vals: Vec<usize> = s.lines()
-        .map(|s| s.trim().parse().unwrap())
-        .collect();
+                                .map(|s| s.trim().parse().unwrap())
+                                .collect();
 
-    println!("got vals -> {:?}", merge_sort_and_count_inversions(&mut vals[..]));
+    println!("got vals -> {:?}",
+             merge_sort_and_count_inversions(&mut vals[..]));
     Ok(())
 }
 
@@ -38,8 +39,8 @@ fn part1_week2() -> io::Result<()> {
 
     try!(f.read_to_string(&mut s));
     let mut vals: Vec<i32> = s.lines()
-        .map(|s| s.trim().parse().unwrap())
-        .collect();
+                              .map(|s| s.trim().parse().unwrap())
+                              .collect();
 
     println!("got vals -> {:?}", algo::qsort::quick_sort(&mut vals[..]));
     Ok(())
@@ -56,17 +57,16 @@ fn part1_week3() -> io::Result<()> {
     try!(f.read_to_string(&mut s));
 
     let g = s.lines()
-        .map(|line|
-             line.trim()
-             .split('\t')
-             .map(|s| s.parse::<u32>().unwrap())
-             .collect::<Vec<_>>())
-        .map(|uvs| {
-            (uvs[0], uvs[1..].to_owned())
-        })
-        .collect::<algo::karger::Graph>();
+             .map(|line| {
+                 line.trim()
+                     .split('\t')
+                     .map(|s| s.parse::<u32>().unwrap())
+                     .collect::<Vec<_>>()
+             })
+             .map(|uvs| (uvs[0], uvs[1..].to_owned()))
+             .collect::<algo::karger::Graph>();
 
-    for _ in 0 .. 500 {
+    for _ in 0..500 {
         println!("{:?}", g.minimum_cut_karger().edges());
     }
     Ok(())
@@ -76,6 +76,6 @@ fn part1_week3() -> io::Result<()> {
 fn main() {
     // part1_week1().unwrap();
 
-    //part1_week2();
+    // part1_week2();
     part1_week3();
 }
