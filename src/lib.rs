@@ -9,3 +9,6 @@ pub mod karger;
 
 /// X. GRAPH SEARCH AND CONNECTIVITY (Week 4)
 pub mod graphs;
+
+/// XI. DIJKSTRA'S SHORTEST-PATH ALGORITHM (Week 5)
+pub mod dijkstra;

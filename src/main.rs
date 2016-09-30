@@ -73,7 +73,6 @@ fn part1_week3() -> io::Result<()> {
 }
 
 
-/// FIXME: wrong answer, all tests passed. :(
 /// How to verify(in R):
 /// ```r
 /// require(igraph);
@@ -114,11 +113,38 @@ fn part1_week4() -> io::Result<()> {
 }
 
 
+fn part1_week5() -> io::Result<()> {
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/dijkstraData.txt"));
+    try!(f.read_to_string(&mut s));
+
+    // an undirected weighted graph with 200 vertices labeled 1 to 200
+    // let mut g = Digraph::new(200);
+    s.lines()
+        .map(|line| {
+            let segs = line.trim().split('\t').collect::<Vec<_>>();
+            let u = segs[0].parse::<usize>().unwrap() - 1;
+            let vs = segs[1..].iter()
+                .map(|tok| {
+                    let pair = tok.split(',')
+                        .map(|s| s.parse::<usize>().unwrap())
+                        .collect::<Vec<_>>();
+                    // v, weight
+                    (pair[0]-1, pair[1])
+                })
+                .collect::<Vec<_>>();
+            println!("u => {} \n{:?}", u, vs);
+        })
+        .last();
+    Ok(())
+}
+
 
 #[allow(unused_must_use)]
 fn main() {
     // part1_week1();
     // part1_week2();
     // part1_week3();
-    part1_week4();
+    // part1_week4();
+    part1_week5();
 }

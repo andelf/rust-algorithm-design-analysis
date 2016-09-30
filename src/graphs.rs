@@ -1,8 +1,3 @@
-// Copy Graph code of week 3 here.
-
-// extern crate adivon;
-// pub use self::adivon::graph::directed::{Digraph, KosarajuSharirSCC};
-
 use std::collections::vec_deque::VecDeque;
 
 
@@ -23,8 +18,7 @@ impl Digraph {
     }
 
     pub fn resize(&mut self, n: usize) {
-        assert!(n > self.v, "no need to resize");
-
+        assert!(n > self.v, "resizing to a smaller graph is not supported.");
         self.v = n;
         self.adj.resize(n, vec![]);
     }
@@ -311,8 +305,6 @@ pub struct KosarajuSharirSCC<'a> {
     marked: Vec<bool>,
     id: Vec<Option<usize>>,
     count: usize,
-    vertices: usize,
-    _leader: usize,
 }
 
 impl<'a> KosarajuSharirSCC<'a> {
@@ -323,8 +315,6 @@ impl<'a> KosarajuSharirSCC<'a> {
             marked: vec![false; n],
             id: vec![None; n],
             count: 0,
-            vertices: n,
-            _leader: 0,
         };
         cc.init();
         cc
@@ -335,7 +325,6 @@ impl<'a> KosarajuSharirSCC<'a> {
 
         for v in g_rev.reverse_postorder() {
             if !self.marked[v] {
-                self._leader = v;
                 self.dfs(v, self.graph);
                 self.count += 1;
             }
@@ -377,7 +366,7 @@ impl<'a> KosarajuSharirSCC<'a> {
             }
             // println!("visiting ... {}", v+1);
             self.marked[v] = true;
-            self.id[v] = Some(self._leader);
+            self.id[v] = Some(self.count);
 
             q.extend(graph.adj(v).iter());
         }
