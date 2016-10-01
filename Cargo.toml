@@ -10,3 +10,5 @@ dev = ["clippy"]
 [dependencies]
 clippy = {version = "*", optional = true}
 rand = "*"
+
+petgraph = "*"

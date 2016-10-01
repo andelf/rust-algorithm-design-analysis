@@ -112,30 +112,53 @@ fn part1_week4() -> io::Result<()> {
     Ok(())
 }
 
+extern crate petgraph;
 
 fn part1_week5() -> io::Result<()> {
+    use self::petgraph::graph::{Graph, NodeIndex};
+    use self::petgraph::algo::dijkstra;
+
     let mut s = String::new();
     let mut f = try!(File::open("./priv/dijkstraData.txt"));
     try!(f.read_to_string(&mut s));
 
     // an undirected weighted graph with 200 vertices labeled 1 to 200
-    // let mut g = Digraph::new(200);
+    let mut g = Graph::<u32, usize>::new();
+    for i in 0..200 {
+        let ix = g.add_node(i);
+    }
+
     s.lines()
-        .map(|line| {
-            let segs = line.trim().split('\t').collect::<Vec<_>>();
-            let u = segs[0].parse::<usize>().unwrap() - 1;
-            let vs = segs[1..].iter()
-                .map(|tok| {
-                    let pair = tok.split(',')
-                        .map(|s| s.parse::<usize>().unwrap())
-                        .collect::<Vec<_>>();
-                    // v, weight
-                    (pair[0]-1, pair[1])
-                })
-                .collect::<Vec<_>>();
-            println!("u => {} \n{:?}", u, vs);
-        })
-        .last();
+     .map(|line| {
+         let segs = line.trim().split('\t').collect::<Vec<_>>();
+         let u = segs[0].parse::<usize>().unwrap() - 1;
+         let vs = segs[1..]
+                      .iter()
+                      .map(|tok| {
+                          let pair = tok.split(',')
+                                        .map(|s| s.parse::<usize>().unwrap())
+                                        .collect::<Vec<usize>>();
+                          // v, weight
+                          (pair[0] - 1, pair[1])
+                      })
+                      .map(|(v, weight)| {
+                          g.add_edge(NodeIndex::new(u), NodeIndex::new(v), weight);
+                          g.add_edge(NodeIndex::new(v), NodeIndex::new(u), weight);
+                      })
+                      .last();
+     })
+     .last();
+
+    let hm = dijkstra(&g,
+                      NodeIndex::new(0),
+                      None,
+                      |gr, n| gr.edges(n).map(|(n, &e)| (n, e)));
+
+    for i in vec![7, 37, 59, 82, 99, 115, 133, 165, 188, 197] {
+        print!("{:?},", hm.get(&NodeIndex::new(i - 1)).unwrap());
+    }
+    println!("");
+
     Ok(())
 }
 
