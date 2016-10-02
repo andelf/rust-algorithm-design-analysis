@@ -125,27 +125,27 @@ fn part1_week5() -> io::Result<()> {
     // an undirected weighted graph with 200 vertices labeled 1 to 200
     let mut g = Graph::<u32, usize>::new();
     for i in 0..200 {
-        let ix = g.add_node(i);
+        g.add_node(i);
     }
 
     s.lines()
      .map(|line| {
          let segs = line.trim().split('\t').collect::<Vec<_>>();
          let u = segs[0].parse::<usize>().unwrap() - 1;
-         let vs = segs[1..]
-                      .iter()
-                      .map(|tok| {
-                          let pair = tok.split(',')
-                                        .map(|s| s.parse::<usize>().unwrap())
-                                        .collect::<Vec<usize>>();
-                          // v, weight
-                          (pair[0] - 1, pair[1])
-                      })
-                      .map(|(v, weight)| {
-                          g.add_edge(NodeIndex::new(u), NodeIndex::new(v), weight);
-                          g.add_edge(NodeIndex::new(v), NodeIndex::new(u), weight);
-                      })
-                      .last();
+         segs[1..]
+             .iter()
+             .map(|tok| {
+                 let pair = tok.split(',')
+                               .map(|s| s.parse::<usize>().unwrap())
+                               .collect::<Vec<usize>>();
+                 // v, weight
+                 (pair[0] - 1, pair[1])
+             })
+             .map(|(v, weight)| {
+                 g.add_edge(NodeIndex::new(u), NodeIndex::new(v), weight);
+                 g.add_edge(NodeIndex::new(v), NodeIndex::new(u), weight);
+             })
+             .last();
      })
      .last();
 
