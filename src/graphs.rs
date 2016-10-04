@@ -232,9 +232,9 @@ pub struct DepthFirstOrder<'a> {
     /// postorder number of v
     post: Vec<usize>,
     /// vertices in preorder
-    pub preorder: VecDeque<usize>,
+    pub preorder: Vec<usize>,
     /// vertices in postorder
-    pub postorder: VecDeque<usize>,
+    pub postorder: Vec<usize>,
     pre_counter: usize,
     post_counter: usize,
 }
@@ -246,8 +246,8 @@ impl<'a> DepthFirstOrder<'a> {
             marked: vec![false; graph.v()],
             pre: vec![0; graph.v()],
             post: vec![0; graph.v()],
-            preorder: VecDeque::new(),
-            postorder: VecDeque::new(),
+            preorder: vec![],
+            postorder: vec![],
             pre_counter: 0,
             post_counter: 0,
         };
@@ -267,10 +267,10 @@ impl<'a> DepthFirstOrder<'a> {
             FinishVertex(usize),
         };
 
-        let mut stack = VecDeque::new();
-        stack.push_back(QueuedJob::VisitVertex(v));
+        let mut stack = Vec::new();
+        stack.push(QueuedJob::VisitVertex(v));
 
-        while let Some(j) = stack.pop_back() {
+        while let Some(j) = stack.pop() {
             match j {
                 QueuedJob::VisitVertex(v) => {
                     if self.marked[v] {
@@ -279,9 +279,9 @@ impl<'a> DepthFirstOrder<'a> {
                     self.marked[v] = true;
                     self.pre[v] = self.pre_counter;
                     self.pre_counter += 1;
-                    self.preorder.push_back(v);
+                    self.preorder.push(v);
 
-                    stack.push_back(QueuedJob::FinishVertex(v));
+                    stack.push(QueuedJob::FinishVertex(v));
                     stack.extend(self.graph
                                      .adj(v)
                                      .iter()
@@ -289,7 +289,7 @@ impl<'a> DepthFirstOrder<'a> {
                                      .map(|u| QueuedJob::VisitVertex(u)));
                 }
                 QueuedJob::FinishVertex(v) => {
-                    self.postorder.push_back(v);
+                    self.postorder.push(v);
                     self.post[v] = self.post_counter;
                     self.post_counter += 1;
                 }
