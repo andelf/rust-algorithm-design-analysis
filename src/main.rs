@@ -172,29 +172,48 @@ fn part1_week6_1() -> io::Result<()> {
     let mut f = try!(File::open("./priv/algo1-programming_prob-2sum.txt"));
     try!(f.read_to_string(&mut s));
 
-    // let mut target: HashSet<i64> = (-10000...10000).into_iter().collect();
+    let mut target: HashSet<i64> = (-10000...10000).into_iter().collect();
     let mut a: HashSet<i64> = HashSet::new();
+    let mut ok = vec![];
     s.lines()
-        .map(|line| {
-            line.trim().parse::<i64>().map(|x| a.insert(x)).expect("parse ok!");
+        .enumerate()
+        .map(|(i, line)| {
+             let n = line.trim().parse::<i64>().expect("parse ok!");
+             for &t in target.iter() {
+                 if t - n != n && a.contains(&(t - n)) {
+                     ok.push(t);
+                     println!("find {} = {} {} at {}", t, n, t-n, i);
+                 }
+             }
+             if !ok.is_empty() {
+                 ok.iter().map(|t| target.remove(t)).last();
+                 ok.clear();
+             }
+             a.insert(n);
          })
         .last();
+    println!("result: {}", 20001 - target.len());
 
-    println!("loads ok {}", a.len());
+    Ok(())
+}
 
-    let mut ok = vec![];
 
-    for t in -10000...10000 {
-        for &x in &a {
-            if t - x != x && a.contains(&(t - x)) {
-                ok.push(t);
-                println!("find {} = {} + {}", t, x, t-x);
-                break;
-            }
-        }
-    }
-    println!("result: {}", ok.len());
+fn part1_week6_2() -> io::Result<()> {
+    use algo::heaps::MedianMaintainer;
 
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/Median.txt"));
+    try!(f.read_to_string(&mut s));
+
+    let mut mm = MedianMaintainer::new();
+    let sum_of_medians: i32 = s.lines()
+        .map(|line| {
+            let n = line.trim().parse::<i32>().expect("parse ok!");
+            mm.push(n);
+            mm.median().cloned().unwrap()
+        })
+        .sum();
+    println!("Sum of Medians: {}", sum_of_medians);
     Ok(())
 }
 
@@ -205,5 +224,5 @@ fn main() {
     // part1_week3();
     // part1_week4();
     // part1_week5();
-    part1_week6_1();
+    part1_week6_2();
 }
