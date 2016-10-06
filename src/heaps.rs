@@ -53,7 +53,7 @@ fn test_reverse_order() {
 }
 
 
-
+/// The "Median Maintenance" algorithm (covered in the Week 5 lecture on heap applications).
 pub struct MedianMaintainer<T> {
     h_low: BinaryHeap<T>,
     h_high: BinaryHeap<ReverseOrder<T>>,
@@ -78,6 +78,11 @@ impl<T: Ord> MedianMaintainer<T> {
 
         // this'll make h_low.len() always = h_high.len() or h_high.len()+1
         // so median will be h_low.peek()
+        self.adjust_heaps()
+    }
+
+    #[inline]
+    fn adjust_heaps(&mut self) {
         if self.h_high.len() > self.h_low.len() {
             self.h_high
                 .pop()
@@ -87,6 +92,12 @@ impl<T: Ord> MedianMaintainer<T> {
                 .pop()
                 .map(|v| self.h_high.push(ReverseOrder::new(v)));
         }
+    }
+
+    pub fn pop_median(&mut self) -> Option<T> {
+        let ret = self.h_low.pop();
+        self.adjust_heaps();
+        ret
     }
 
     pub fn peek_median(&self) -> Option<&T> {
@@ -106,4 +117,12 @@ fn test_median_maintainer() {
                    &medians[i],
                    "medians verification");
     }
+
+    assert_eq!(mm.pop_median(), Some(4));
+    assert_eq!(mm.pop_median(), Some(3));
+    assert_eq!(mm.pop_median(), Some(7));
+    assert_eq!(mm.pop_median(), Some(2));
+    assert_eq!(mm.pop_median(), Some(7));
+    assert_eq!(mm.pop_median(), Some(1));
+    assert_eq!(mm.pop_median(), Some(9));
 }
