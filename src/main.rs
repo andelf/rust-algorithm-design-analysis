@@ -8,6 +8,7 @@
 // according to those terms.
 
 #![allow(dead_code)]
+#![feature(inclusive_range_syntax)]
 
 use std::io;
 use std::io::prelude::*;
@@ -163,11 +164,46 @@ fn part1_week5() -> io::Result<()> {
 }
 
 
+fn part1_week6_1() -> io::Result<()> {
+    // use std::collections::hash_map::HashMap;
+    use std::collections::hash_set::HashSet;
+
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/algo1-programming_prob-2sum.txt"));
+    try!(f.read_to_string(&mut s));
+
+    // let mut target: HashSet<i64> = (-10000...10000).into_iter().collect();
+    let mut a: HashSet<i64> = HashSet::new();
+    s.lines()
+        .map(|line| {
+            line.trim().parse::<i64>().map(|x| a.insert(x)).expect("parse ok!");
+         })
+        .last();
+
+    println!("loads ok {}", a.len());
+
+    let mut ok = vec![];
+
+    for t in -10000...10000 {
+        for &x in &a {
+            if t - x != x && a.contains(&(t - x)) {
+                ok.push(t);
+                println!("find {} = {} + {}", t, x, t-x);
+                break;
+            }
+        }
+    }
+    println!("result: {}", ok.len());
+
+    Ok(())
+}
+
 #[allow(unused_must_use)]
 fn main() {
     // part1_week1();
     // part1_week2();
     // part1_week3();
     // part1_week4();
-    part1_week5();
+    // part1_week5();
+    part1_week6_1();
 }
