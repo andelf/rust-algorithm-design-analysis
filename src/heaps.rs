@@ -94,14 +94,24 @@ impl<T: Ord> MedianMaintainer<T> {
         }
     }
 
+    /// Removes median item from current collected values.
     pub fn pop_median(&mut self) -> Option<T> {
         let ret = self.h_low.pop();
         self.adjust_heaps();
         ret
     }
 
+    /// Peek current median item.
     pub fn peek_median(&self) -> Option<&T> {
         self.h_low.peek()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.h_high.is_empty() && self.h_low.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.h_low.len() + self.h_high.len()
     }
 }
 
