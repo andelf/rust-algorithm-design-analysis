@@ -69,28 +69,28 @@ impl<T: Ord> MedianMaintainer<T> {
     }
 
     pub fn push(&mut self, val: T) {
-        if self.h_low.peek().map_or(false, |l| &val <= l) {
-            self.h_low.push(val);
-        } else {
-            // for val > h_high.min, or other case
+        if self.h_high.peek().map_or(false, |h| &val >= h) {
             self.h_high.push(ReverseOrder::new(val));
+        } else {
+            // for val < h_low.max, or other case
+            self.h_low.push(val);
         }
 
-        if self.h_high.len() == self.h_low.len() + 2 {
-            self.h_high.pop()
+        // this'll make h_low.len() always = h_high.len() or h_high.len()+1
+        // so median will be h_low.peek()
+        if self.h_high.len() > self.h_low.len() {
+            self.h_high
+                .pop()
                 .map(|v| self.h_low.push(v.unwrap())); // unwrap reverse order wrapper
-        } else if self.h_low.len() > self.h_high.len() {
-            self.h_low.pop()
+        } else if self.h_low.len() >= self.h_high.len() + 2 {
+            self.h_low
+                .pop()
                 .map(|v| self.h_high.push(ReverseOrder::new(v)));
         }
     }
 
-    pub fn median(&self) -> Option<&T> {
-        if self.h_high.len() == self.h_low.len() { // even item,
-            self.h_low.peek()
-        } else {                // odd item
-            self.h_high.peek().map(|v| v.as_ref())
-        }
+    pub fn peek_median(&self) -> Option<&T> {
+        self.h_low.peek()
     }
 }
 
@@ -102,6 +102,8 @@ fn test_median_maintainer() {
     let medians = vec![7, 2, 4, 4, 4, 3, 4];
     for (i, val) in vec![7, 2, 4, 7, 1, 3, 9].into_iter().enumerate() {
         mm.push(val);
-        assert_eq!(mm.median().unwrap_or(&0), &medians[i], "medians verification");
+        assert_eq!(mm.peek_median().unwrap_or(&0),
+                   &medians[i],
+                   "medians verification");
     }
 }

@@ -176,22 +176,22 @@ fn part1_week6_1() -> io::Result<()> {
     let mut a: HashSet<i64> = HashSet::new();
     let mut ok = vec![];
     s.lines()
-        .enumerate()
-        .map(|(i, line)| {
-             let n = line.trim().parse::<i64>().expect("parse ok!");
-             for &t in target.iter() {
-                 if t - n != n && a.contains(&(t - n)) {
-                     ok.push(t);
-                     println!("find {} = {} {} at {}", t, n, t-n, i);
-                 }
+     .enumerate()
+     .map(|(i, line)| {
+         let n = line.trim().parse::<i64>().expect("parse ok!");
+         for &t in target.iter() {
+             if t - n != n && a.contains(&(t - n)) {
+                 ok.push(t);
+                 println!("find {} = {} {} at {}", t, n, t - n, i);
              }
-             if !ok.is_empty() {
-                 ok.iter().map(|t| target.remove(t)).last();
-                 ok.clear();
-             }
-             a.insert(n);
-         })
-        .last();
+         }
+         if !ok.is_empty() {
+             ok.iter().map(|t| target.remove(t)).last();
+             ok.clear();
+         }
+         a.insert(n);
+     })
+     .last();
     println!("result: {}", 20001 - target.len());
 
     Ok(())
@@ -207,12 +207,12 @@ fn part1_week6_2() -> io::Result<()> {
 
     let mut mm = MedianMaintainer::new();
     let sum_of_medians: i32 = s.lines()
-        .map(|line| {
-            let n = line.trim().parse::<i32>().expect("parse ok!");
-            mm.push(n);
-            mm.median().cloned().unwrap()
-        })
-        .sum();
+                               .map(|line| {
+                                   let n = line.trim().parse::<i32>().expect("parse ok!");
+                                   mm.push(n);
+                                   mm.peek_median().cloned().unwrap()
+                               })
+                               .sum();
     println!("Sum of Medians: {}", sum_of_medians);
     Ok(())
 }
@@ -224,5 +224,6 @@ fn main() {
     // part1_week3();
     // part1_week4();
     // part1_week5();
+    // part1_week6_1();
     part1_week6_2();
 }
