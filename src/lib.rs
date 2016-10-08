@@ -1,3 +1,5 @@
+// # Part 1
+
 /// III. DIVIDE & CONQUER ALGORITHMS (Week 1)
 pub mod inversions;
 
@@ -11,7 +13,12 @@ pub mod karger;
 pub mod graphs;
 
 /// XI. DIJKSTRA'S SHORTEST-PATH ALGORITHM (Week 5)
-pub mod dijkstra;
+/// pub mod dijkstra;
 
 /// XII. HEAPS (Week 5)
 pub mod heaps;
+
+// # Part 2
+
+/// V. PRIM'S MINIMUM SPANNING TREE ALGORITHM (Week 1)
+pub mod mst;

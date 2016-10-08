@@ -115,6 +115,7 @@ fn part1_week4() -> io::Result<()> {
 
 extern crate petgraph;
 
+// FIXME: remove usage of petgraph
 fn part1_week5() -> io::Result<()> {
     use self::petgraph::graph::{Graph, NodeIndex};
     use self::petgraph::algo::dijkstra;
@@ -288,6 +289,37 @@ fn part2_week1_2() -> io::Result<()> {
     Ok(())
 }
 
+fn part2_week1_3() -> io::Result<()> {
+    use algo::mst::{EdgeWeightedGraph, Edge};
+
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/edges.txt"));
+    try!(f.read_to_string(&mut s));
+
+    let header: Vec<usize> =
+        s.splitn(3, char::is_whitespace).take(2).map(|n| n.parse().unwrap()).collect();
+    let number_of_nodes = header[0];
+    let numer_of_edges = header[1];
+
+    // println!("N {} E {}", number_of_nodes, numer_of_edges);
+
+    let mut g = EdgeWeightedGraph::new(number_of_nodes);
+
+    s.lines().skip(1).
+        map(|line| {
+            let vals: Vec<i64> = line.trim().split(' ').map(|s| s.parse::<i64>().unwrap())
+                .collect();
+            let u = vals[0] as usize - 1; // node name starts from 0
+            let v = vals[1] as usize - 1;
+            let w = vals[2];
+            g.add_edge(Edge::new(u, v, w));
+        })
+        .last();
+
+    println!("Sum of MST weights: {}", g.prim_mst().edges().iter().map(|e| e.weight()).sum::<i64>());
+    Ok(())
+}
+
 
 #[allow(unused_must_use)]
 fn main() {
@@ -303,4 +335,6 @@ fn main() {
     // # Part 2
     part2_week1_1();
     part2_week1_2();
+    part2_week1_3();
+
 }
