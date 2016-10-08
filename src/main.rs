@@ -296,27 +296,33 @@ fn part2_week1_3() -> io::Result<()> {
     let mut f = try!(File::open("./priv/edges.txt"));
     try!(f.read_to_string(&mut s));
 
-    let header: Vec<usize> =
-        s.splitn(3, char::is_whitespace).take(2).map(|n| n.parse().unwrap()).collect();
+    let header: Vec<usize> = s.splitn(3, char::is_whitespace)
+                              .take(2)
+                              .map(|n| n.parse().unwrap())
+                              .collect();
     let number_of_nodes = header[0];
-    let numer_of_edges = header[1];
+    let _numer_of_edges = header[1];
 
     // println!("N {} E {}", number_of_nodes, numer_of_edges);
 
     let mut g = EdgeWeightedGraph::new(number_of_nodes);
 
-    s.lines().skip(1).
-        map(|line| {
-            let vals: Vec<i64> = line.trim().split(' ').map(|s| s.parse::<i64>().unwrap())
-                .collect();
-            let u = vals[0] as usize - 1; // node name starts from 0
-            let v = vals[1] as usize - 1;
-            let w = vals[2];
-            g.add_edge(Edge::new(u, v, w));
-        })
-        .last();
+    s.lines()
+     .skip(1)
+     .map(|line| {
+         let vals: Vec<i64> = line.trim()
+                                  .split(' ')
+                                  .map(|s| s.parse::<i64>().unwrap())
+                                  .collect();
+         let u = vals[0] as usize - 1; // node name starts from 0
+         let v = vals[1] as usize - 1;
+         let w = vals[2];
+         g.add_edge(Edge::new(u, v, w));
+     })
+     .last();
 
-    println!("Sum of MST weights: {}", g.prim_mst().edges().iter().map(|e| e.weight()).sum::<i64>());
+    println!("Sum of MST weights: {}",
+             g.prim_mst().edges().iter().map(|e| e.weight()).sum::<i64>());
     Ok(())
 }
 
