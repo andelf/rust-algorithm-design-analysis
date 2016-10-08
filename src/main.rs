@@ -223,13 +223,84 @@ fn part1_week6_2() -> io::Result<()> {
     Ok(())
 }
 
+
+
+fn part2_week1_1() -> io::Result<()> {
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/jobs.txt"));
+    try!(f.read_to_string(&mut s));
+
+    let mut jobs: Vec<(i64, i64)> = s.lines()
+                                     .skip(1)
+                                     .map(|line| {
+                                         let pair = line.trim()
+                                                        .split(' ')
+                                                        .map(|s| s.parse::<i64>().unwrap())
+                                                        .collect::<Vec<i64>>();
+                                         (pair[0], pair[1])  // (weight, length)
+                                     })
+                                     .collect();
+
+    jobs.sort_by_key(|j| (j.0 - j.1, j.0));
+    jobs.reverse();             // decrease order
+
+    // report the sum of weighted completion times
+    let mut acc_time = 0;
+    let mut sum_of_weighted_completion_time = 0;
+    for j in &jobs {
+        acc_time += j.1;
+        sum_of_weighted_completion_time += j.0 * acc_time;
+    }
+    println!("by diff: sum of weighted completion times: {}",
+             sum_of_weighted_completion_time);
+    Ok(())
+}
+
+
+fn part2_week1_2() -> io::Result<()> {
+    let mut s = String::new();
+    let mut f = try!(File::open("./priv/jobs.txt"));
+    try!(f.read_to_string(&mut s));
+
+    let mut jobs: Vec<(i64, i64)> = s.lines()
+                                     .skip(1)
+                                     .map(|line| {
+                                         let pair = line.trim()
+                                                        .split(' ')
+                                                        .map(|s| s.parse::<i64>().unwrap())
+                                                        .collect::<Vec<i64>>();
+                                         (pair[0], pair[1])  // (weight, length)
+                                     })
+                                     .collect();
+
+    jobs.sort_by(|j, k| (j.0 as f32 / j.1 as f32).partial_cmp(&(k.0 as f32 / k.1 as f32)).unwrap());
+    jobs.reverse();             // decrease order
+
+    // report the sum of weighted completion times
+    let mut acc_time = 0;
+    let mut sum_of_weighted_completion_time = 0;
+    for j in &jobs {
+        acc_time += j.1;
+        sum_of_weighted_completion_time += j.0 * acc_time;
+    }
+    println!("by ratio: sum of weighted completion times: {}",
+             sum_of_weighted_completion_time);
+    Ok(())
+}
+
+
 #[allow(unused_must_use)]
 fn main() {
+    // # Part 1
     // part1_week1();
     // part1_week2();
     // part1_week3();
     // part1_week4();
     // part1_week5();
-    part1_week6_1();
+    // part1_week6_1();
     // part1_week6_2();
+
+    // # Part 2
+    part2_week1_1();
+    part2_week1_2();
 }
