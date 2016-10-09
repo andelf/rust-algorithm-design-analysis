@@ -13,7 +13,7 @@ pub mod karger;
 pub mod graphs;
 
 /// XI. DIJKSTRA'S SHORTEST-PATH ALGORITHM (Week 5)
-/// pub mod dijkstra;
+pub mod dijkstra;
 
 /// XII. HEAPS (Week 5)
 pub mod heaps;
