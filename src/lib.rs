@@ -13,7 +13,7 @@ pub mod karger;
 pub mod graphs;
 
 /// XI. DIJKSTRA'S SHORTEST-PATH ALGORITHM (Week 5)
-pub mod dijkstra;
+//pub mod dijkstra;
 
 /// XII. HEAPS (Week 5)
 pub mod heaps;
@@ -22,3 +22,6 @@ pub mod heaps;
 
 /// V. PRIM'S MINIMUM SPANNING TREE ALGORITHM (Week 1)
 pub mod mst;
+
+/// VII. CLUSTERING (Week 2)
+pub mod clustering;

@@ -327,6 +327,18 @@ fn part2_week1_3() -> io::Result<()> {
 }
 
 
+fn part2_week2() -> io::Result<()> {
+    use algo::clustering::read_test_data_string;
+
+    let mut s = String::new();
+    let mut f = try!(File::open("../priv/clustering1.txt"));
+    try!(f.read_to_string(&mut s));
+
+    read_test_data_string(&s);
+
+    Ok(())
+}
+
 #[allow(unused_must_use)]
 fn main() {
     // # Part 1
@@ -339,8 +351,9 @@ fn main() {
     // part1_week6_2();
 
     // # Part 2
-    part2_week1_1();
-    part2_week1_2();
-    part2_week1_3();
+    // part2_week1_1();
+    // part2_week1_2();
+    // part2_week1_3();
 
+    part2_week2();
 }
