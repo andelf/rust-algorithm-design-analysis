@@ -7,7 +7,7 @@ pub struct UnionFind {
     id: Vec<usize>,
     /// number of objects in the tree rooted at i.
     rank: Vec<usize>,
-    count: usize
+    count: usize,
 }
 
 impl UnionFind {
@@ -15,7 +15,7 @@ impl UnionFind {
         UnionFind {
             id: (0..n).collect(),
             rank: vec![0; n],
-            count: n
+            count: n,
         }
     }
 
@@ -83,19 +83,21 @@ fn test_uf() {
 
 
 pub fn read_test_data_string(s: &str) {
-    let number_of_nodes: usize = s.splitn(2, char::is_whitespace).next()
-                              .map(|n| n.parse().unwrap())
-        .unwrap();
+    let number_of_nodes: usize = s.splitn(2, char::is_whitespace)
+                                  .next()
+                                  .map(|n| n.parse().unwrap())
+                                  .unwrap();
 
-    let mut edges: Vec<(usize, usize, i64)> = s.lines()
-     .skip(1)
-     .map(|line| {
-         let mut it: Vec<i64> = line.trim()
-             .split(' ')
-             .map(|s| s.parse::<i64>().unwrap())
-             .collect();
-         (it[0] as usize, it[1] as usize, it[2])
-     }).collect();
+    let mut edges = s.lines()
+                     .skip(1)
+                     .map(|line| {
+                         let it = line.trim()
+                                      .split(' ')
+                                      .map(|s| s.parse().unwrap())
+                                      .collect::<Vec<i64>>();
+                         (it[0] as usize, it[1] as usize, it[2])
+                     })
+                     .collect::<Vec<(usize, usize, i64)>>();
 
     edges.sort_by_key(|t| t.2);
     edges.reverse();
@@ -104,19 +106,13 @@ pub fn read_test_data_string(s: &str) {
 
     while uf.count() > 4 {
         if let Some((u, v, _weight)) = edges.pop() {
-            uf.union(u-1, v-1);
+            uf.union(u - 1, v - 1);
         }
     }
 
 
-    // for i in 0 .. number_of_nodes {
-    //     for j in 0 .. number_of_nodes {
-    //         uf.connected(i, j);
-    //     }
-    // }
-
     for &(u, v, w) in edges.iter().rev() {
-        if !uf.connected(u-1, v-1) {
+        if !uf.connected(u - 1, v - 1) {
             println!("maximum spacing => {}", w);
             break;
         }

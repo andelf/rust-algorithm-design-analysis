@@ -335,7 +335,6 @@ fn part2_week2() -> io::Result<()> {
     try!(f.read_to_string(&mut s));
 
     read_test_data_string(&s);
-
     Ok(())
 }
 
