@@ -1,5 +1,6 @@
 // # Part 1
 
+#![allow(unused_attributes)]
 #![feature(inclusive_range_syntax)]
 
 /// III. DIVIDE & CONQUER ALGORITHMS (Week 1)
