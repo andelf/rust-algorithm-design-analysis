@@ -12,3 +12,4 @@ clippy = {version = "*", optional = true}
 rand = "*"
 petgraph = "*"
 rustc-serialize = "*"
+itertools = "*"

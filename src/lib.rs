@@ -1,5 +1,7 @@
 // # Part 1
 
+#![feature(inclusive_range_syntax)]
+
 /// III. DIVIDE & CONQUER ALGORITHMS (Week 1)
 pub mod inversions;
 
